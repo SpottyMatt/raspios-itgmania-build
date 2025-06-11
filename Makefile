@@ -72,4 +72,23 @@ itgmania-build:
 itgmania-install:
 	$(MAKE) --dir itgmania install
 
+# Test target for build script development
+.PHONY: test-build
+test-build:
+	@echo "=== ITGMania Build Test ==="
+	@echo "Hostname: $$(hostname)"
+	@echo "Date: $$(date)"
+	@echo "PWD: $$(pwd)"
+	@echo "Distro: $(DISTRO)"
+	@echo "RPI Model: $(RPI_MODEL)"
+	@echo "Parallelism: $(PARALLELISM)"
+	@echo "Git Status:"
+	@git status --short || echo "Not a git repository"
+	@echo "Git Log (last 3):"
+	@git log --oneline -3 || echo "No git history"
+	@echo "Directory Contents:"
+	@ls -la
+	@echo "=== Test Complete ==="
+	@sleep 2  # Give time to see output
+
 endif

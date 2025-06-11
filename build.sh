@@ -99,6 +99,18 @@ log_info "Log file: $LOG_NAME"
 # Step 2: Remote setup and build
 log_info "Connecting to $REMOTE_HOST..."
 
+# Get the remote URL and convert SSH to HTTPS for remote machine
+ORIGIN_URL=$(git config --get remote.origin.url)
+if [[ "$ORIGIN_URL" =~ ^git@(.+):(.+)\.git$ ]]; then
+    # Convert SSH format to HTTPS
+    REMOTE_REPO_URL="https://github.com/${BASH_REMATCH[2]}.git"
+else
+    # Use as-is (already HTTPS or other format)
+    REMOTE_REPO_URL="$ORIGIN_URL"
+fi
+
+log_info "Remote will clone from: $REMOTE_REPO_URL"
+
 # Create the remote build script
 REMOTE_SCRIPT=$(cat <<EOF
 #!/bin/bash
@@ -123,7 +135,7 @@ if [[ "$FRESH_BUILD" == "true" ]]; then
     fi
     
     echo -e "\${BLUE}[REMOTE]${NC} Cloning repository recursively (this may take a while)..."
-    git clone --recursive $(git config --get remote.origin.url) "$REMOTE_BUILD_DIR"
+    git clone --recursive $REMOTE_REPO_URL "$REMOTE_BUILD_DIR"
     
     cd "$REMOTE_BUILD_DIR"
     echo -e "\${BLUE}[REMOTE]${NC} Checking out commit $LOCAL_COMMIT"
@@ -153,7 +165,7 @@ else
         git submodule update --init --recursive
     else
         echo -e "\${BLUE}[REMOTE]${NC} Build directory doesn't exist, creating with recursive clone..."
-        git clone --recursive $(git config --get remote.origin.url) "$REMOTE_BUILD_DIR"
+        git clone --recursive $REMOTE_REPO_URL "$REMOTE_BUILD_DIR"
         
         cd "$REMOTE_BUILD_DIR"
         echo -e "\${BLUE}[REMOTE]${NC} Checking out commit $LOCAL_COMMIT"

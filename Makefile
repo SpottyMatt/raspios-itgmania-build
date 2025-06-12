@@ -62,15 +62,16 @@ itgmania-prep:
 	cd itgmania
 	git submodule init
 	git submodule update
-	echo "TODO: CMake commands"
+	echo "ITGMania source prepared successfully"
 
 .PHONY: itgmania-build
 itgmania-build:
-	$(MAKE) --dir itgmania
+	cd itgmania && cmake -B build -DCMAKE_BUILD_TYPE=Release
+	cd itgmania && make -C build $(PARALLELISM)
 
 .PHONY: itgmania-install
 itgmania-install:
-	$(MAKE) --dir itgmania install
+	cd itgmania && sudo make -C build install
 
 # Test target for build script development
 .PHONY: test-build

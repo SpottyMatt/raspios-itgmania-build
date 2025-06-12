@@ -61,8 +61,8 @@ itgmania-prep:
 	git submodule update
 	cd itgmania
 	git submodule init
-	git submodule update
-	echo "ITGMania source prepared successfully"
+	git submodule update --recursive
+	echo "ITGMania source and nested submodules prepared successfully"
 
 .PHONY: itgmania-build
 itgmania-build:

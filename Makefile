@@ -67,7 +67,8 @@ itgmania-prep:
 
 .PHONY: itgmania-build
 itgmania-build:
-	$(MAKE) --dir itgmania
+	cd itgmania && cmake -B build -DCMAKE_BUILD_TYPE=Release -DWITH_MINIMAID=OFF
+	cd itgmania && make -C build $(PARALLELISM)
 
 .PHONY: itgmania-install
 itgmania-install:

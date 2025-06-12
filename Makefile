@@ -61,15 +61,18 @@ itgmania-prep:
 	git submodule update
 	cd itgmania
 	git submodule update --init --recursive
-	echo "ITGMania source and nested submodules prepared successfully"
+	cmake -G "Unix Makefiles" \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DWITH_MINIMAID=OFF
+	cmake .
 
 .PHONY: itgmania-build
 itgmania-build:
-	$(MAKE) --dir itgmania
+	$(MAKE) --dir itgmania $(PARALLELISM)
 
 .PHONY: itgmania-install
 itgmania-install:
-	$(MAKE) --dir itgmania install
+	$(MAKE) --dir itgmania install $(PARALLELISM)
 
 # Test target for build script development
 .PHONY: test-build

@@ -46,8 +46,8 @@ build-prep: ./itgmania-build/deps/$(DISTRO).list
 	sudo apt-get install -y \
 		$$(echo $$(cat ./itgmania-build/deps/$(DISTRO).list))
 	sudo apt-get autoremove -y
-	sudo mkdir -p /usr/local/itgmania-5.1
-	sudo chmod a+rw /usr/local/itgmania-5.1
+	sudo mkdir -p /usr/local/itgmania
+	sudo chmod a+rw /usr/local/itgmania
 
 ./itgmania-build/deps/*.list:
 	[ -e $(@) ]

@@ -1,3 +1,6 @@
 [submodule "rpi-hw-info"]
 	path = rpi-hw-info
 	url = https://github.com/SpottyMatt/rpi-hw-info.git
+[submodule "itgmania"]
+	path = itgmania
+	url = https://github.com/itgmania/itgmania.git

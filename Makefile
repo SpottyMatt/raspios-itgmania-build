@@ -62,7 +62,8 @@ itgmania-prep:
 	cd itgmania
 	git submodule update --init --recursive
 	cmake -G "Unix Makefiles" \
-		-DCMAKE_BUILD_TYPE=Release
+		-DCMAKE_BUILD_TYPE=Release \
+		-DWITH_MINIMAID=OFF
 	cmake $(PARALLELISM) .
 
 .PHONY: itgmania-build

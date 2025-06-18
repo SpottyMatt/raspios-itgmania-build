@@ -67,7 +67,7 @@ If you encounter issues with automatic hardware detection, you can override the 
 make RPI_MODEL=4B
 ```
 
-See this excellent gist: [GCC compiler optimization for ARM-based systems](https://gist.github.com/fm4dd/c663217935dc17f0fc73c9c81b0aa845) for more information on compiling with GCC on Raspberry Pi.
+See this excellent gist: [GCC compiler optimization for ARM-based systems](https://gist.github.com/fm4dd/c663217935dc17f0fc73c9c81b0aa845) for more information on compiling with GCC on Raspberry Pi - but you shouldn't need it; itgmania is largely arm-compatible!
 
 Supporting Additional Raspberry Pi Models
 -------------------------

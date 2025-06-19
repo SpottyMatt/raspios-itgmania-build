@@ -1,6 +1,6 @@
 DISTRO=$(shell dpkg --status tzdata|grep Provides|cut -f2 -d'-')
 RPI_MODEL=$(shell ./rpi-hw-info/rpi-hw-info.py 2>/dev/null | awk -F ':' '{print $$1}')
-BASE_INSTALL_DIR=/usr/local/itgmania
+BASE_INSTALL_DIR=/usr/local
 UNIQUE_INSTALL_DIR=false
 
 ifeq ($(RPI_MODEL),4B)
@@ -56,7 +56,7 @@ build-prep: ./itgmania-build/deps/$(DISTRO).list
 .ONESHELL:
 itgmania-prep: ARM_CPU=$(shell ./rpi-hw-info/rpi-hw-info.py | awk -F ':' '{print $$3}')
 itgmania-prep: ARM_FPU=$(shell ./rpi-hw-info/rpi-hw-info.py | awk -F ':' '{print $$4}')
-itgmania-prep: INSTALL_DIR=$(BASE_INSTALL_DIR)$(shell ./extract-version.sh ./itgmania --prefix - 2>/dev/null || echo '')
+itgmania-prep: ITGM_INSTALL_DIR=itgmania$(shell ./extract-version.sh ./itgmania --prefix - 2>/dev/null || echo '')
 itgmania-prep:
 	git submodule init
 	git submodule update
@@ -64,14 +64,15 @@ itgmania-prep:
 	git submodule update --init --recursive
 	
 	# Create install directory
-	sudo mkdir -p "$(INSTALL_DIR)"
-	sudo chmod a+rw "$(INSTALL_DIR)"
+	sudo mkdir -p "$(BASE_INSTALL_DIR)/$(ITGM_INSTALL_DIR)"
+	sudo chmod a+rw "$(BASE_INSTALL_DIR)/$(ITGM_INSTALL_DIR)"
 	
 	# Configure CMake with the correct install prefix
 	cmake -G "Unix Makefiles" \
 		-DCMAKE_BUILD_TYPE=Release \
 		-DWITH_MINIMAID=OFF \
-		-DCMAKE_INSTALL_PREFIX="$(INSTALL_DIR)"
+		-DCMAKE_INSTALL_PREFIX="$(BASE_INSTALL_DIR)" \
+		-DSM_INSTALL_DESTINATION="$(ITGM_INSTALL_DIR)"
 	cmake .
 
 .PHONY: itgmania-build

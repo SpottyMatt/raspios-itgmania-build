@@ -1,6 +1,6 @@
 DISTRO=$(shell dpkg --status tzdata|grep Provides|cut -f2 -d'-')
 RPI_MODEL=$(shell ./rpi-hw-info/rpi-hw-info.py 2>/dev/null | awk -F ':' '{print $$1}')
-
+BASE_INSTALL_DIR=/usr/local/itgmania
 UNIQUE_INSTALL_DIR=false
 
 ifeq ($(RPI_MODEL),4B)
@@ -51,16 +51,6 @@ build-prep: ./itgmania-build/deps/$(DISTRO).list
 
 ./itgmania-build/deps/*.list:
 	[ -e $(@) ]
-
-# Target-specific variables allow us to compute INSTALL_DIR after submodule is available
-.PHONY: compute-install-dir
-compute-install-dir:
-	@if [ "$(UNIQUE_INSTALL_DIR)" = "true" ]; then \
-		VERSION_STRING=$$(./extract-version.sh ./itgmania 2>/dev/null || echo unknown); \
-		echo "$(BASE_INSTALL_DIR)-$$VERSION_STRING"; \
-	else \
-		echo "$(BASE_INSTALL_DIR)"; \
-	fi
 
 .PHONY: itgmania-prep
 .ONESHELL:

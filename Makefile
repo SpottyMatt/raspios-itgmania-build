@@ -1,6 +1,8 @@
 DISTRO=$(shell dpkg --status tzdata|grep Provides|cut -f2 -d'-')
 RPI_MODEL=$(shell ./rpi-hw-info/rpi-hw-info.py 2>/dev/null | awk -F ':' '{print $$1}')
 
+UNIQUE_INSTALL_DIR=false
+
 ifeq ($(RPI_MODEL),4B)
 PARALLELISM=-j3
 else
@@ -46,24 +48,40 @@ build-prep: ./itgmania-build/deps/$(DISTRO).list
 	sudo apt-get install -y \
 		$$(echo $$(cat ./itgmania-build/deps/$(DISTRO).list))
 	sudo apt-get autoremove -y
-	sudo mkdir -p /usr/local/itgmania
-	sudo chmod a+rw /usr/local/itgmania
 
 ./itgmania-build/deps/*.list:
 	[ -e $(@) ]
+
+# Target-specific variables allow us to compute INSTALL_DIR after submodule is available
+.PHONY: compute-install-dir
+compute-install-dir:
+	@if [ "$(UNIQUE_INSTALL_DIR)" = "true" ]; then \
+		VERSION_STRING=$$(./extract-version.sh ./itgmania 2>/dev/null || echo unknown); \
+		echo "$(BASE_INSTALL_DIR)-$$VERSION_STRING"; \
+	else \
+		echo "$(BASE_INSTALL_DIR)"; \
+	fi
 
 .PHONY: itgmania-prep
 .ONESHELL:
 itgmania-prep: ARM_CPU=$(shell ./rpi-hw-info/rpi-hw-info.py | awk -F ':' '{print $$3}')
 itgmania-prep: ARM_FPU=$(shell ./rpi-hw-info/rpi-hw-info.py | awk -F ':' '{print $$4}')
+itgmania-prep: INSTALL_DIR=$(BASE_INSTALL_DIR)$(shell ./extract-version.sh ./itgmania --prefix - 2>/dev/null || echo '')
 itgmania-prep:
 	git submodule init
 	git submodule update
 	cd itgmania
 	git submodule update --init --recursive
+	
+	# Create install directory
+	sudo mkdir -p "$(INSTALL_DIR)"
+	sudo chmod a+rw "$(INSTALL_DIR)"
+	
+	# Configure CMake with the correct install prefix
 	cmake -G "Unix Makefiles" \
 		-DCMAKE_BUILD_TYPE=Release \
-		-DWITH_MINIMAID=OFF
+		-DWITH_MINIMAID=OFF \
+		-DCMAKE_INSTALL_PREFIX="$(INSTALL_DIR)"
 	cmake .
 
 .PHONY: itgmania-build
@@ -72,6 +90,6 @@ itgmania-build:
 
 .PHONY: itgmania-install
 itgmania-install:
-	$(MAKE) --dir itgmania install $(PARALLELISM)
+	$(MAKE) --dir itgmania $(PARALLELISM) install
 
 endif

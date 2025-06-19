@@ -1,5 +1,6 @@
 DISTRO=$(shell dpkg --status tzdata|grep Provides|cut -f2 -d'-')
 RPI_MODEL=$(shell ./rpi-hw-info/rpi-hw-info.py 2>/dev/null | awk -F ':' '{print $$1}')
+BASE_INSTALL_DIR=/usr/local
 
 ifeq ($(RPI_MODEL),4B)
 PARALLELISM=-j3
@@ -46,8 +47,6 @@ build-prep: ./itgmania-build/deps/$(DISTRO).list
 	sudo apt-get install -y \
 		$$(echo $$(cat ./itgmania-build/deps/$(DISTRO).list))
 	sudo apt-get autoremove -y
-	sudo mkdir -p /usr/local/itgmania
-	sudo chmod a+rw /usr/local/itgmania
 
 ./itgmania-build/deps/*.list:
 	[ -e $(@) ]
@@ -61,9 +60,16 @@ itgmania-prep:
 	git submodule update
 	cd itgmania
 	git submodule update --init --recursive
+	
+	# Create install directory
+	sudo mkdir -p "$(BASE_INSTALL_DIR)"
+	sudo chmod a+rw "$(BASE_INSTALL_DIR)"
+	
+	# Configure CMake with the correct install prefix
 	cmake -G "Unix Makefiles" \
 		-DCMAKE_BUILD_TYPE=Release \
-		-DWITH_MINIMAID=OFF
+		-DWITH_MINIMAID=OFF \
+		-DCMAKE_INSTALL_PREFIX="$(BASE_INSTALL_DIR)"
 	cmake .
 
 .PHONY: itgmania-build
@@ -72,6 +78,6 @@ itgmania-build:
 
 .PHONY: itgmania-install
 itgmania-install:
-	$(MAKE) --dir itgmania install $(PARALLELISM)
+	$(MAKE) --dir itgmania $(PARALLELISM) install
 
 endif

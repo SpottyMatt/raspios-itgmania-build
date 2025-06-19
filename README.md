@@ -103,6 +103,12 @@ The current build is configured in the `Makefile` with two main targets:
 - `itgmania-build` - Builds the ITGmania binary
 - `itgmania-install` - Installs the ITGmania binary to `/usr/local/itgmania/`
 
+### Configuration Variables
+
+- `BASE_INSTALL_DIR` - Controls the base installation directory (default: `/usr/local`)
+  - ITGmania will be installed to `$(BASE_INSTALL_DIR)/itgmania/`
+  - Can be overridden: `make BASE_INSTALL_DIR=/opt`
+
 Dependencies
 -------------------------
 

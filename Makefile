@@ -63,8 +63,8 @@ itgmania-prep:
 	git submodule update --init --recursive
 	
 	# Create install directory
-	sudo mkdir -p "$(BASE_INSTALL_DIR)"
-	sudo chmod a+rw "$(BASE_INSTALL_DIR)"
+	sudo mkdir -p "$(BASE_INSTALL_DIR)/itgmania"
+	sudo chmod a+rw "$(BASE_INSTALL_DIR)/itgmania"
 	
 	# Configure CMake with the correct install prefix
 	cmake -G "Unix Makefiles" \

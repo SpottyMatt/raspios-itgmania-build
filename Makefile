@@ -1,5 +1,5 @@
 DISTRO=$(shell dpkg --status tzdata|grep Provides|cut -f2 -d'-')
-RPI_MODEL=$(shell ./venv/bin/rpi-hw-info 2>/dev/null | awk -F ':' '{print $$1}')
+RPI_MODEL=$(shell if [ -x ./venv/bin/rpi-hw-info ]; then ./venv/bin/rpi-hw-info 2>/dev/null | awk -F ':' '{print $$1}'; fi)
 BASE_INSTALL_DIR=/usr/local
 
 ifeq ($(RPI_MODEL),4B)

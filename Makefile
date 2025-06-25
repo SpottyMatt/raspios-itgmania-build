@@ -17,7 +17,7 @@ all: rpi-hw-info-setup
 rpi-hw-info-setup:
 	python3 -m venv venv
 	./venv/bin/pip install --upgrade pip
-	./venv/bin/pip install rpi-hw-info==2.0.4
+	./venv/bin/pip install "rpi-hw-info~=2.0"
 	@ if ! [ -e ./venv/bin/rpi-hw-info ]; then echo "Failed to install rpi-hw-info. Check Python and pip setup."; exit 1; fi
 
 %: rpi-hw-info-setup

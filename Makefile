@@ -1,5 +1,5 @@
 DISTRO=$(shell dpkg --status tzdata|grep Provides|cut -f2 -d'-')
-RPI_MODEL=$(shell ./rpi-hw-info/rpi-hw-info.py 2>/dev/null | awk -F ':' '{print $$1}')
+RPI_MODEL=$(shell ./venv/bin/rpi-hw-info 2>/dev/null | awk -F ':' '{print $$1}')
 BASE_INSTALL_DIR=/usr/local
 
 ifeq ($(RPI_MODEL),4B)
@@ -10,16 +10,17 @@ endif
 
 .PHONY: all
 
-ifeq ($(wildcard ./rpi-hw-info/rpi-hw-info.py),)
-all: submodules
+ifeq ($(wildcard ./venv/bin/rpi-hw-info),)
+all: rpi-hw-info-setup
 	$(MAKE) all
 
-submodules:
-	git submodule init rpi-hw-info
-	git submodule update rpi-hw-info
-	@ if ! [ -e ./rpi-hw-info/rpi-hw-info.py ]; then echo "Couldn't retrieve the RPi HW Info Detector's git submodule. Figure out why or run 'make RPI_MODEL=<your_model>'"; exit 1; fi
+rpi-hw-info-setup:
+	python3 -m venv venv
+	./venv/bin/pip install --upgrade pip
+	./venv/bin/pip install rpi-hw-info==2.0.4
+	@ if ! [ -e ./venv/bin/rpi-hw-info ]; then echo "Failed to install rpi-hw-info. Check Python and pip setup."; exit 1; fi
 
-%: submodules
+%: rpi-hw-info-setup
 	$(MAKE) $@
 
 else
@@ -53,8 +54,8 @@ build-prep: ./itgmania-build/deps/$(DISTRO).list
 
 .PHONY: itgmania-prep
 .ONESHELL:
-itgmania-prep: ARM_CPU=$(shell ./rpi-hw-info/rpi-hw-info.py | awk -F ':' '{print $$3}')
-itgmania-prep: ARM_FPU=$(shell ./rpi-hw-info/rpi-hw-info.py | awk -F ':' '{print $$4}')
+itgmania-prep: ARM_CPU=$(shell ./venv/bin/rpi-hw-info | awk -F ':' '{print $$3}')
+itgmania-prep: ARM_FPU=$(shell ./venv/bin/rpi-hw-info | awk -F ':' '{print $$4}')
 itgmania-prep:
 	git submodule init
 	git submodule update
@@ -79,5 +80,9 @@ itgmania-build:
 .PHONY: itgmania-install
 itgmania-install:
 	$(MAKE) --dir itgmania $(PARALLELISM) install
+
+.PHONY: clean-rpi-hw-info
+clean-rpi-hw-info:
+	rm -rf venv
 
 endif

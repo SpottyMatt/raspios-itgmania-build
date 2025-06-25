@@ -57,7 +57,7 @@ Notes
 Building for Other Raspberry Pi Models
 -------------------------
 
-The build system uses hardware detection to automatically configure ARM compilation flags via the [rpi-hw-info](https://github.com/SpottyMatt/rpi-hw-info) submodule.
+The build system uses hardware detection to automatically configure ARM compilation flags via the [rpi-hw-info](https://pypi.org/project/rpi-hw-info/) PyPI package.
 
 For Raspberry Pi 4B, this has been tested and works. Other models should theoretically work but have not been tested.
 
@@ -72,11 +72,11 @@ See this excellent gist: [GCC compiler optimization for ARM-based systems](https
 Supporting Additional Raspberry Pi Models
 -------------------------
 
-This repository uses the [SpottyMatt/rpi-hw-info](https://github.com/SpottyMatt/rpi-hw-info) repository to decode Raspberry Pi hardware information and figure out the correct compiler flags.
+This repository uses the [rpi-hw-info](https://pypi.org/project/rpi-hw-info/) PyPI package to decode Raspberry Pi hardware information and figure out the correct compiler flags.
 
-If you manage to get this to compile on a new Raspberry Pi model, make sure that repository is capable of correctly detecting the new Pi, and reports the correct CPU and FPU compile targets.
+If you manage to get this to compile on a new Raspberry Pi model, the hardware detection should automatically work as long as the rpi-hw-info package supports your model.
 
-Then, update the `rpi-hw-info` submodule in this repo and you're done! This repo now supports compiling for the new Raspberry Pi hardware.
+If you encounter issues with new hardware, please report them to the [rpi-hw-info project](https://github.com/SpottyMatt/rpi-hw-info).
 
 ITGmania Source
 -------------------------
